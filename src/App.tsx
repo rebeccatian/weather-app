@@ -41,7 +41,7 @@ const App = () => {
   return (
     <div className="w-dvw h-dvh overflow-hidden">
       <div className={`${selectedPlace ? 'animate-fade-out' : 'animate-fade-in'} opacity-100 relative flex flex-col h-full`}>
-        <div className="md:flex justify-between p-12 md:p-20 sm:mt-12 items-end">
+        <div className="md:flex justify-between p-8 md:p-20 sm:mt-12 items-end">
           <h1 className="!text-4xl sm:!text-5xl lg:!text-6xl border-b md:border-0 pb-8 md:pb-0 font-medium w-[20%] text-wrap">The Weather App</h1>
           <div className="sm:flex gap-10 mt-12 ">
             <span className="font-light text-4xl hidden md:block">/</span>
@@ -64,7 +64,7 @@ const App = () => {
         </div>
         <img src="intro.jpg" alt="Weather Landing Page Image" className="h-96 object-cover m-8 rounded-3xl" />
       </div>
-      <div className={`${selectedPlace ? 'animate-fade-in' : 'animate-fade-out'} opacity-0 flex flex-col p-12 gap-5 h-full relative`}>
+      <div className={`${selectedPlace ? 'animate-fade-in' : 'animate-fade-out'} opacity-0 flex flex-col p-8 md:p-12 gap-5 h-full relative overflow-y-scroll`}>
         <div className="border-b pb-2 relative !text-sm md:!text-lg">
           <h1 className="!text-2xl sm:!text-4xl pb-2">{selectedPlace?.address.split(',')[0] || 'No location selected'}</h1>
           <h2 className="italic font-light">{selectedPlace?.address.split(',')[1] + locationStateString || ''}</h2>

@@ -6,6 +6,8 @@
   margin-right: auto;
   position: relative;
   list-style: none;
+  min-height: 200px;
+  min-width: 200px;
   padding: 0;
   z-index: 1;
 }

@@ -3,7 +3,6 @@ import { Navigation, Scrollbar, FreeMode, Mousewheel } from 'swiper/modules';
 import CloudRain from '../assets/cloud-rain.svg?react';
 import CloudSun from '../assets/cloud-sun.svg?react';
 import type { FilteredHourlyItem } from '../hooks/useFilteredHourlyData';
-import 'swiper/css'
 
 const SwiperComponent = ({ data } : { data: FilteredHourlyItem[] }) => (
   <div className="w-full h-96 sm:h-fit relative overflow-y-scroll sm:overflow-auto">

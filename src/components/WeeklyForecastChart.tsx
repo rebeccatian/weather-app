@@ -5,10 +5,6 @@ import type { AgChartProps } from 'ag-charts-react';
 import type { WeeklyForecastItem } from '../hooks/useTransformWeeklyData';
 
 const WeeklyForecastChart = ({ data } : { data: WeeklyForecastItem[]}) => {
-    console.log("WeeklyForecastChart Data:", data);
-    console.log("First data item:", data[0]);
-    console.log("Data item keys:", data[0] ? Object.keys(data[0]) : 'No data');
-    
     // Chart Options: Control & configure the chart
     const chartOptions = useMemo(() => ({
         // Data: Data to be displayed in the chart

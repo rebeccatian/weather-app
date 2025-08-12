@@ -21,6 +21,10 @@ export interface WeatherData {
         precipitation_sum: Float32Array | null;
         precipitation_probability_max: Float32Array | null;
     };
+    timezone: {
+        name: string;
+        utcOffsetSeconds: number;
+    };
 }
 
 export const fetchWeather = async (lat: number, lng: number): Promise<WeatherData> => {
@@ -32,23 +36,17 @@ export const fetchWeather = async (lat: number, lng: number): Promise<WeatherDat
         "daily": ["temperature_2m_max", "temperature_2m_min", "precipitation_sum", "precipitation_probability_max"],
         "wind_speed_unit": "mph",
         "temperature_unit": "fahrenheit",
+        "timezone": "auto",
     };
     const url = "https://api.open-meteo.com/v1/forecast";
     const responses = await fetchWeatherApi(url, params);
 
     const response = responses[0];
 
-    // Attributes for timezone and location
-    const latitude = response.latitude();
-    const longitude = response.longitude();
+    // Get timezone information
     const utcOffsetSeconds = response.utcOffsetSeconds();
 
-    console.log(
-        `\nCoordinates: ${latitude}°N ${longitude}°E`,
-        `\nTimezone difference to GMT+0: ${utcOffsetSeconds}s`,
-    );
-
-    const current = response.current()!;
+    const current = response.current()!;;
     const hourly = response.hourly()!;
     const daily = response.daily()!;
 
@@ -79,15 +77,12 @@ export const fetchWeather = async (lat: number, lng: number): Promise<WeatherDat
             temperature_2m_min: daily.variables(1)!.valuesArray(),
             precipitation_sum: daily.variables(2)!.valuesArray(),
             precipitation_probability_max: daily.variables(3)!.valuesArray(),
+        },
+        timezone: {
+            name: response.timezone() || 'UTC',
+            utcOffsetSeconds: utcOffsetSeconds,
         }
     };// 'weatherData' now contains a simple structure with arrays with datetime and weather data
-    console.log(
-        `\nCurrent time: ${weatherData.current.time}`,
-        `\nCurrent temperature_2m: ${weatherData.current.temperature_2m}`,
-        `\nCurrent precipitation: ${weatherData.current.precipitation}`,
-    );
-    console.log("\nHourly data", weatherData.hourly);
-    console.log("\nDaily data", weatherData.daily);
 
     return weatherData;
 

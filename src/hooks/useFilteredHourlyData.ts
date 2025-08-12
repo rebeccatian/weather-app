@@ -11,9 +11,9 @@ export interface FilteredHourlyItem {
   dateString: string;
 }
 
-export const useFilteredHourlyData = (hourlyData: WeatherData['hourly'] | undefined): FilteredHourlyItem[] => {
+export const useFilteredHourlyData = (hourlyData: WeatherData['hourly'] | undefined, locationDateTime?: DateTime): FilteredHourlyItem[] => {
   const filteredHourlyData = useMemo(() => {
-    const dt = DateTime.now();
+    const dt = locationDateTime || DateTime.now();
     const currentHour = dt.hour;
     const currentDate = dt.toISODate(); // Get current date in YYYY-MM-DD format
 
@@ -23,19 +23,16 @@ export const useFilteredHourlyData = (hourlyData: WeatherData['hourly'] | undefi
     
     const filtered = hourlyData.time
       .map((time, index) => {
-        // Parse as local time to avoid timezone conversion
-        const date = time; // time is already a Date object
-        const dateString = date.toString().split('2025')[0];
-        console.log(dateString);
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        const displayHours = hours % 12 || 12; // Convert to 12-hour format
-        const displayMinutes = minutes.toString().padStart(2, '0');
-        const formattedTime = `${displayHours}:${displayMinutes}${ampm}`;
+        // Convert to location timezone if available
+        const dateTime = locationDateTime 
+          ? DateTime.fromJSDate(time).setZone(locationDateTime.zone)
+          : DateTime.fromJSDate(time);
+        
+        const dateString = dateTime.toFormat('EEE MMM dd');
+        const formattedTime = dateTime.toFormat('h:mm a');
 
         return {
-          time: time.toISOString(), // Convert Date to string for the interface
+          time: time.toISOString(), // Keep as ISO string for the interface
           dateString,
           formattedTime,
           temperature: hourlyData.temperature_2m?.[index] ?? 0,
@@ -44,17 +41,19 @@ export const useFilteredHourlyData = (hourlyData: WeatherData['hourly'] | undefi
         };
       })
       .filter(item => {
-        const itemDate = DateTime.fromISO(item.time);
+        const itemDate = locationDateTime 
+          ? DateTime.fromISO(item.time).setZone(locationDateTime.zone)
+          : DateTime.fromISO(item.time);
         const itemHour = itemDate.hour;
         const itemDateStr = itemDate.toISODate();
         
         // Include times from NEXT hour onwards today, or all times for future days
         return (itemDateStr === currentDate && itemHour > currentHour) || 
-               (itemDateStr !== null && itemDateStr > currentDate);
+               (itemDateStr !== null && currentDate !== null && itemDateStr > currentDate);
       });
 
     return filtered;
-  }, [hourlyData]);
+  }, [hourlyData, locationDateTime]);
 
   return filteredHourlyData;
 };

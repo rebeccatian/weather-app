@@ -6,6 +6,7 @@ import { fetchWeather, type WeatherData } from "./api/fetchWeather";
 import { useSelectPlace } from "./hooks/useSelectPlace";
 import { useFilteredHourlyData } from "./hooks/useFilteredHourlyData";
 import { useTransformWeeklyData } from "./hooks/useTransformWeeklyData";
+import { useLocationDateTime } from "./hooks/useLocationDateTime";
 import AutocompleteDropdown from "./components/AutocompleteDropdown";
 import Search from "./assets/search.svg?react";
 
@@ -30,14 +31,13 @@ const App = () => {
       fetchWeather(selectedPlace.lat, selectedPlace.lng)
         .then(data => setWeatherData(data))
         .catch(error => console.error("Error fetching weather data:", error));
-      console.log("Selected Place:", selectedPlace);
     }
   }, [selectedPlace]);
 
-  const transformedWeeklyData = useTransformWeeklyData(weatherData);
- 
-  const dt = DateTime.now();
-  const filteredHourlyData = useFilteredHourlyData(weatherData?.hourly);
+  const locationDateTime = useLocationDateTime(weatherData);
+  const transformedWeeklyData = useTransformWeeklyData(weatherData, locationDateTime);
+  const filteredHourlyData = useFilteredHourlyData(weatherData?.hourly, locationDateTime);
+  const locationStateString = selectedPlace?.address.split(',')[2] ? ', ' + selectedPlace?.address.split(',')[2] : ''
 
   return (
     <div className="w-dvw h-dvh overflow-hidden">
@@ -68,10 +68,10 @@ const App = () => {
       <div className={`${selectedPlace ? 'animate-fade-in' : 'animate-fade-out'} opacity-0 flex flex-col p-12 gap-5 h-full relative`}>
         <div className="border-b pb-2 relative text-md">
           <h1 className="pb-2">{selectedPlace?.address.split(',')[0] || 'No location selected'}</h1>
-          <h2 className="italic font-light">{selectedPlace?.address.split(',')[1] + ',' + selectedPlace?.address.split(',')[2] || ''}</h2>
+          <h2 className="italic font-light">{selectedPlace?.address.split(',')[1] + locationStateString || ''}</h2>
           <span>{`${weatherData?.current.temperature_2m.toFixed(2)} °F`}</span>
           <p className="md:absolute relative bottom-2 right-0 pt-4">
-            {dt.toLocaleString(DateTime.DATETIME_MED)}
+            {locationDateTime.toLocaleString(DateTime.DATETIME_MED)}
           </p>
           <button
             onClick={() => {

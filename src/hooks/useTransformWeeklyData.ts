@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { DateTime } from 'luxon';
 import type { WeatherData } from '../api/fetchWeather';
 
 export interface WeeklyForecastItem {
@@ -9,24 +10,27 @@ export interface WeeklyForecastItem {
   precipitation_probability_max: number;
 }
 
-export const useTransformWeeklyData = (weatherData: WeatherData | undefined): WeeklyForecastItem[] => {
+export const useTransformWeeklyData = (weatherData: WeatherData | undefined, locationDateTime?: DateTime): WeeklyForecastItem[] => {
   const transformedWeeklyData = useMemo(() => {
     if (!weatherData?.daily?.time) {
       return [];
     }
 
     return weatherData.daily.time.map((time, index) => {
-      const date = new Date(time);
+      // Convert to location timezone if available
+      const dateTime = locationDateTime 
+        ? DateTime.fromJSDate(time).setZone(locationDateTime.zone)
+        : DateTime.fromJSDate(time);
 
       return {
-        time: `${date.getMonth() + 1}/${date.getDate()}`,
+        time: dateTime.toFormat('M/d'),
         temperature_max: Number(weatherData.daily.temperature_2m_max?.[index]?.toFixed(2)) || 0,
         temperature_min: Number(weatherData.daily.temperature_2m_min?.[index]?.toFixed(2)) || 0,
         precipitation_sum: Number(weatherData.daily.precipitation_sum?.[index]?.toFixed(2)) || 0,
         precipitation_probability_max: Number(weatherData.daily.precipitation_probability_max?.[index]?.toFixed(2)) || 0,
       };
     });
-  }, [weatherData]);
+  }, [weatherData, locationDateTime]);
 
   return transformedWeeklyData;
 };

@@ -6,7 +6,7 @@ export interface FilteredHourlyItem {
   time: string;
   formattedTime: string;
   temperature: number;
-  rain: number;
+  precipitation_probability: number;
   index: number;
   dateString: string;
 }
@@ -36,7 +36,7 @@ export const useFilteredHourlyData = (hourlyData: WeatherData['hourly'] | undefi
           dateString,
           formattedTime,
           temperature: hourlyData.temperature_2m?.[index] ?? 0,
-          rain: hourlyData.rain?.[index] ?? 0,
+          precipitation_probability: hourlyData.precipitation_probability?.[index] ?? 0,
           index
         };
       })

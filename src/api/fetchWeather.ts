@@ -10,7 +10,6 @@ export interface WeatherData {
         time: Date[];
         temperature_2m: Float32Array | null;
         precipitation_probability: Float32Array | null;
-        rain: Float32Array | null;
         showers: Float32Array | null;
         snowfall: Float32Array | null;
     };
@@ -63,10 +62,9 @@ export const fetchWeather = async (lat: number, lng: number): Promise<WeatherDat
                     new Date((Number(hourly.time()) + i * hourly.interval() + utcOffsetSeconds) * 1000)
                 ),
             temperature_2m: hourly.variables(0)!.valuesArray()?.slice(0, 48) || null,
-            precipitation_probability: hourly.variables(1)!.valuesArray()?.slice(0, 24) || null,
-            rain: hourly.variables(2)?.valuesArray()?.slice(0, 48) || null,
-            showers: hourly.variables(3)?.valuesArray()?.slice(0, 48) || null,
-            snowfall: hourly.variables(4)?.valuesArray()?.slice(0, 48) || null
+            precipitation_probability: hourly.variables(1)!.valuesArray()?.slice(0, 48) || null,
+            showers: hourly.variables(2)?.valuesArray()?.slice(0, 48) || null,
+            snowfall: hourly.variables(3)?.valuesArray()?.slice(0, 48) || null
         },
         daily: {
             time: [...Array((Number(daily.timeEnd()) - Number(daily.time())) / daily.interval())] // forecast for the 7 days

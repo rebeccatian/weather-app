@@ -11,14 +11,6 @@ A modern, responsive weather application built with React, TypeScript, and Vite.
 - **📅 7-Day Forecast**: Interactive charts displaying temperature trends and precipitation
 - **🌍 Global Coverage**: Weather data for cities worldwide via Open Meteo API
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 18+ 
-- npm or yarn
-- Google Maps API key (for city search functionality)
-
 ## 🛠️ Built With
 
 ### Core Technologies

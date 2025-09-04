@@ -1,30 +1,25 @@
 
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState } from "react";
+import { DateTime } from 'luxon';
+import { useDispatch, useSelector } from "react-redux";
 
-import { usePlacesAutocomplete } from "./hooks/usePlacesAutocomplete";
 import { fetchWeather, type WeatherData } from "./api/fetchWeather";
-import { useSelectPlace } from "./hooks/useSelectPlace";
 import { useFilteredHourlyData } from "./hooks/useFilteredHourlyData";
 import { useTransformWeeklyData } from "./hooks/useTransformWeeklyData";
 import { useLocationDateTime } from "./hooks/useLocationDateTime";
-import AutocompleteDropdown from "./components/AutocompleteDropdown";
 import Search from "./assets/search.svg?react";
-
-import { DateTime } from 'luxon';
 import Gallery from "./components/Gallery";
 import WeeklyForecastChart from "./components/WeeklyForecastChart";
-import { useSelectedPlaceContext } from "./hooks/useSelectedPlaceContext";
+import { setSelectedPlace } from "./store/selectedPlaceSlice";
+
+import type { RootState } from "./store/store";
+import SearchInputField from "./components/SearchInputField";
 
 const App = () => {
   const [weatherData, setWeatherData] = useState<WeatherData>();
   const [query, setQuery] = useState('');
-  const { predictions } = usePlacesAutocomplete(query);
-  const { selectPlace, selectedPlace } = useSelectPlace();
-  const { setSelectedPlace } = useSelectedPlaceContext();
-
-  const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value);
-  }
+  const selectedPlace = useSelector((state: RootState) => state.selectedPlace.selected);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (selectedPlace) {
@@ -43,24 +38,10 @@ const App = () => {
       <div className={`${selectedPlace ? 'animate-fade-out' : 'animate-fade-in'} opacity-100 relative flex flex-col h-full`}>
         <div className="md:flex justify-between p-8 pb-4 md:p-20 sm:mt-12 items-end">
           <h1 className="!text-4xl sm:!text-5xl lg:!text-6xl border-b md:border-0 pb-8 md:pb-0 font-medium w-[20%] text-wrap">The Weather App</h1>
-          <div className="sm:flex gap-10 mt-8 lg:mt-12">
-            <span className="font-light text-4xl hidden md:block">/</span>
-            <p className="text-sm sm:text-base sm:w-[30%] text-wrap">Search and select a city to start</p>
-            <div className="relative">
-              <input
-                type="text"
-                onChange={handleOnChange}
-                value={query}
-                className="border border-gray-300 px-4 py-2 rounded-md h-fit w-full md:w-fit"
-                placeholder="City Name"
-              />
-              <AutocompleteDropdown
-                predictions={predictions}
-                selectPlace={selectPlace}
-                setQuery={setQuery}
-              />
-            </div>
-          </div>
+          <SearchInputField
+            query={query}
+            setQuery={setQuery}
+          />
         </div>
         <img src="intro.jpg" alt="Weather Landing Page Image" className="h-96 object-cover mt-6 m-8 sm:m-8 rounded-3xl" />
       </div>
@@ -74,7 +55,7 @@ const App = () => {
           </p>
           <button
             onClick={() => {
-              setSelectedPlace(null)
+              dispatch(setSelectedPlace(null));
               setQuery('');
             }}
             className="md:absolute top-4 right-0 p-2 flex gap-3 border rounded w-full md:w-fit h-fit !text-sm"

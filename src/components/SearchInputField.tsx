@@ -9,9 +9,10 @@ const SearchInputField = ({ query, setQuery} : { query: string, setQuery: React.
     }
 
     return (
-        <div className="sm:flex gap-10 mt-8 lg:mt-1 relative">
+        <div className="sm:flex gap-10 mt-8 lg:mt-1">
             <span className="font-light text-4xl hidden md:block">/</span>
             <p className="text-sm sm:text-base sm:w-[30%] text-wrap">Search and select a city to start</p>
+            <div className="relative">
               <input
                 type="text"
                 onChange={handleOnChange}
@@ -22,6 +23,7 @@ const SearchInputField = ({ query, setQuery} : { query: string, setQuery: React.
               <AutocompleteDropdown
                 predictions={predictions}
               />
+            </div>
         </div>
     )
 }

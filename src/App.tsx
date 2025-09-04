@@ -34,18 +34,20 @@ const App = () => {
   const filteredHourlyData = useFilteredHourlyData(weatherData?.hourly, locationDateTime);
   const locationStateString = selectedPlace?.address.split(',')[2] ? ', ' + selectedPlace?.address.split(',')[2] : '';
   return (
-    <div className="w-dvw h-dvh overflow-hidden">
-      <div className={`${selectedPlace ? 'animate-fade-out' : 'animate-fade-in'} opacity-100 relative flex flex-col h-full`}>
-        <div className="md:flex justify-between p-8 pb-4 md:p-20 sm:mt-12 items-end">
+    <div className="w-dvw h-dvh">
+      <div className={`${selectedPlace ? 'animate-fade-out' : 'animate-fade-in h-full'} opacity-100 relative flex flex-col`}>
+        <div className="md:flex justify-between p-12 pb-4 items-end flex-shrink-0">
           <h1 className="!text-4xl sm:!text-5xl lg:!text-6xl border-b md:border-0 pb-8 md:pb-0 font-medium w-[20%] text-wrap">The Weather App</h1>
           <SearchInputField
             query={query}
             setQuery={setQuery}
           />
         </div>
-        <img src="intro.jpg" alt="Weather Landing Page Image" className="h-96 object-cover mt-6 m-8 sm:m-8 rounded-3xl" />
+        <div className="flex-1 items-center flex justify-center p-8 min-h-0">
+          <img src="intro.jpg" alt="Weather Landing Page Image" className="object-cover rounded-3xl w-full h-full" />
+        </div>
       </div>
-      <div className={`${selectedPlace ? 'animate-fade-in' : 'animate-fade-out'} opacity-0 flex flex-col p-8 md:p-12 gap-5 h-full relative overflow-y-scroll`}>
+      <div className={`${selectedPlace ? 'animate-fade-in p-8 md:p-12 h-full' : 'animate-fade-out'} opacity-0 flex flex-col gap-5 relative overflow-x-hidden`}>
         <div className="border-b pb-2 relative !text-sm md:!text-lg">
           <h1 className="!text-2xl sm:!text-4xl pb-2">{selectedPlace?.address.split(',')[0] || 'No location selected'}</h1>
           <h2 className="italic font-light">{selectedPlace?.address.split(',')[1] + locationStateString || ''}</h2>
@@ -69,8 +71,8 @@ const App = () => {
         <div className="flex-grow">
           <h3 className="text-lg sm:text-xl italic">Weekly Forecast</h3>
           <WeeklyForecastChart data={transformedWeeklyData} />
+          <p className="opacity-70 italic text-sm md:text-md pb-2">Weather data provided by Open Meteo API</p>
         </div>
-        <p className="opacity-70 italic absolute bottom-2 text-sm md:text-md">Weather data provided by Open Meteo API</p>
       </div>
     </div>
   );
